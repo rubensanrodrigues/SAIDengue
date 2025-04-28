@@ -1,0 +1,27 @@
+<div className='app'>
+  <div className='user-area'>
+    <br />
+    <h2>Área protegida!</h2>
+    <b>Por favor faça seu login para prosseguir.</b>
+    <br /><br />
+    <section>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form-entity">
+        <div class="form-user-container">
+          <div>
+            <label for="username">Username</label>
+            <input id="username" formControlName="username" type="text" />
+          </div>
+          <br />
+          <div>
+            <label for="password">Senha</label>
+            <input id="password" formControlName="password" type="password" />
+          </div>
+          <br />
+          <span class="error-msg">{{ msg }}&nbsp;</span>
+          <br />
+          <button class="button" type="submit">Login</button>
+        </div>
+      </form>
+    </section>
+  </div>
+</div> 

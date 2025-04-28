@@ -1,0 +1,32 @@
+<app-header title="SAI Dengue - Área protegida" [showLogout]="true">
+  <app-pacientemenu header-menu/>
+</app-header>
+<br>
+<div class="container">
+  <h2>Pacientes</h2>
+
+  <div class="busca-container">
+    <input type="text" [formControl]="busca" placeholder="Buscar paciente por nome..." />
+    <button (click)="onBuscarManual()">Buscar</button>
+    <button (click)="novoPaciente()">+ Novo Paciente</button>
+  </div>
+
+  <div *ngIf="pacientes.length === 0">
+    <p>Nenhum paciente encontrado.</p>
+  </div>
+
+  <table *ngIf="pacientes.length > 0" class="tabela">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Data de Nascimento</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let paciente of pacientes" (click)="abrirDetalhe(paciente.id)">
+        <td>{{ paciente.nome }}</td>
+        <td>{{ paciente.data_nascimento | date: 'dd/MM/yyyy' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

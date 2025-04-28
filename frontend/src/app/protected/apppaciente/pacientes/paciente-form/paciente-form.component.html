@@ -1,0 +1,74 @@
+<app-header title="SAI Dengue - Área protegida" [showLogout]="true">
+  <app-pacientemenu header-menu/>
+</app-header>
+<br>
+<div class="form-container">
+  <h2>Cadastro de Paciente</h2>
+  <form [formGroup]="pacienteForm" (ngSubmit)="onSubmit()">
+    <!-- Dados pessoais -->
+    <div class="form-group">
+      <label for="nome">Nome</label>
+      <input id="nome" formControlName="nome" type="text" placeholder="Nome completo" />
+    </div>
+
+    <div class="form-group">
+      <label for="data_nascimento">Data de Nascimento</label>
+      <input id="data_nascimento" formControlName="data_nascimento" type="date" />
+    </div>
+
+    <div class="form-group">
+      <label for="genero">Gênero</label>
+      <select id="genero" formControlName="genero">
+        <option value="">Selecione</option>
+        <option value="masculino">Masculino</option>
+        <option value="feminino">Feminino</option>
+        <option value="outro">Outro</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="contato">Contato</label>
+      <input id="contato" formControlName="contato" type="text" placeholder="Telefone ou e-mail" />
+    </div>
+
+    <div class="form-group">
+      <label for="historico_saude">Histórico de Saúde</label>
+      <textarea id="historico_saude" formControlName="historico_saude" placeholder="Descreva o histórico de saúde"></textarea>
+    </div>
+
+    <!-- Endereço -->
+    <h3>Endereço</h3>
+
+    <div class="form-group">
+      <label for="endereco_cep">CEP</label>
+      <input id="endereco_cep" formControlName="endereco_cep" type="text" placeholder="CEP" />
+    </div>
+
+    <div class="form-group">
+      <label for="endereco_logradouro">Logradouro</label>
+      <input id="endereco_logradouro" formControlName="endereco_logradouro" type="text" placeholder="Rua, Avenida, etc." />
+    </div>
+
+    <div class="form-group">
+      <label for="endereco_numero">Número</label>
+      <input id="endereco_numero" formControlName="endereco_numero" type="text" placeholder="Número" />
+    </div>
+
+    <div class="form-group">
+      <label for="endereco_complemento">Complemento</label>
+      <input id="endereco_complemento" formControlName="endereco_complemento" type="text" placeholder="Casa, Bloco, etc." />
+    </div>
+
+    <div class="form-group">
+      <label for="endereco_bairro">Bairro</label>
+      <input id="endereco_bairro" formControlName="endereco_bairro" type="text" placeholder="Bairro" />
+    </div>
+
+    <div class="form-group">
+      <label for="endereco_cidade">Cidade</label>
+      <input id="endereco_cidade" formControlName="endereco_cidade" type="text" placeholder="Cidade" />
+    </div>
+
+    <button type="submit" [disabled]="pacienteForm.invalid" class="btn-submit">Salvar</button>
+  </form>
+</div>

@@ -1,0 +1,177 @@
+html {
+    width: 96vw;
+    height: 100vh;
+    margin: auto;
+    text-align: center;
+  }
+  
+  .app {
+    max-width: 1000px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+  
+  .user-area {
+    text-align: left;
+  }
+  
+  .inputSearch {
+    width: 480px;
+    padding: 12px;
+    border: 2px solid #bbb;
+    border-radius: 5px;
+    box-shadow: 3px 3px 3px #ccc;
+    font-size: 12pt;
+  }
+  
+  .input-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .input-wrapper button {
+    position: absolute;
+    top: 5px;
+    right: 3px;
+    font-size: 12px;
+    color: black;
+    font-weight: bold;
+    display: inline-block;
+    margin: 5px;
+    padding: 5px 10px;  
+  }
+  
+  .user-area-menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #125677;
+  }
+  
+  .user-area-menu li {
+    float: left;
+    margin-left: 5px;
+  }
+  
+  .user-area-menu li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 16px;
+    text-decoration: none;
+    font-weight: normal;
+  }
+  
+  .collection-items {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    text-align: left;
+  }
+  
+  .collection-items-new {
+    text-align: right;
+    margin-top: 8px;
+    padding: 3px;
+  }
+  
+  .collection-items-new button {
+    font-size: 13pt;
+    padding: 4px;
+  }
+  
+  .collection-items li {
+    padding: 14px 25px;
+    border-bottom: 1px solid rgb(11, 43, 65);
+  }
+  
+  .collection-items a {
+    display: block;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .collection-items a:link, .collection-items a:visited {
+    background-color: #ffffff;
+    color: rgb(9, 85, 129);
+    
+  }
+  
+  .collection-items a:hover, .collection-items a:active {
+    background-color: rgb(210, 218, 223);
+  }
+  
+  .collection-items-count {
+    text-align: right;
+  }
+  
+  .form-entity {
+    width: 98%;
+    padding: 10px;
+    background-color: #f1f1f1;
+  }
+  
+  .form-entity input, .form-entity textarea {
+    width: 99%;
+  }
+  
+  .form-entity textarea {
+    height: 200px;
+  }
+  
+  .form-entity label {
+    font-weight: bold;
+    padding-bottom: 5px;
+    display: block;
+  }
+  
+  .form-user-container {
+    width: 400px;
+    margin: auto;
+  }
+  
+  .button {
+    height: auto;
+    line-height: normal;
+    font-size: 12px;
+    color: black;
+    font-weight: bold;
+    display: inline-block;
+    margin: 5px;
+    padding: 5px 10px;
+    background-color: #d2dce0;
+    border: 1px solid rgb(11, 43, 65);
+    border-radius: 3px;
+  }
+  
+  .button:hover {
+    background-color: rgb(32, 95, 134);
+  }
+  
+  .error-msg {
+    color: rgb(138, 9, 9);
+    font-weight: bold;
+    font-size: 10pt;
+  }
+  
+  #mensagemValidacao {
+    font-size: 10pt;
+  }
+  
+  @media only screen and (max-width: 600px) {
+    .app {
+      max-width: 100%;
+      margin-right: 0px;
+      margin-left: 0px;
+    }
+  
+    .inputSearch {
+      width: 94%;
+    }
+  
+    .input-wrapper {
+      width: 98%;
+    }
+  }

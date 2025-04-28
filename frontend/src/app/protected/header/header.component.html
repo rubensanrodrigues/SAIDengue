@@ -1,0 +1,11 @@
+<section class="header-top">
+  <span class="logo">{{ title }}</span>
+
+  <a *ngIf="showLogout" routerLink="/protected/logout" class="logout-link">
+    Sair
+  </a>
+</section>
+
+<section class="header-menu">
+  <ng-content select="[header-menu]"></ng-content>&nbsp;
+</section>

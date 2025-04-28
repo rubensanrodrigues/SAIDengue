@@ -1,0 +1,53 @@
+<app-header title="SAI Dengue - Área protegida" [showLogout]="true">
+  <app-pacientemenu header-menu/>
+</app-header>
+<br>
+<div class="form-container">
+  <h2>{{ isEditMode ? 'Editar Exame' : 'Novo Exame' }}</h2>
+  <form [formGroup]="exameForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label>Data do Exame</label>
+      <input type="date" formControlName="exame_data" />
+    </div>
+
+    <div class="form-group">
+      <label>Tipo de Exame</label>
+      <select formControlName="exame_tipo">
+        <option value="PCR">PCR</option>
+        <option value="Teste Rápido">Teste Rápido</option>
+        <option value="Sorologia">Sorologia</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Status do Exame</label>
+      <select formControlName="exame_status">
+        <option value="Concluído">Concluído</option>
+        <option value="Em andamento">Em andamento</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Data do Resultado</label>
+      <input type="date" formControlName="resultado_data" />
+    </div>
+
+    <div class="form-group">
+      <label>Status do Resultado</label>
+      <select formControlName="resultado_status">
+        <option value="Positivo">Positivo</option>
+        <option value="Negativo">Negativo</option>
+        <option value="Inconclusivo">Inconclusivo</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Observações</label>
+      <textarea formControlName="resultado_observacoes"></textarea>
+    </div>
+
+    <button type="submit" [disabled]="exameForm.invalid" class="btn-submit">
+      {{ isEditMode ? 'Atualizar' : 'Salvar' }}
+    </button>
+  </form>
+</div>

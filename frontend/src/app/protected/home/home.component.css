@@ -1,0 +1,28 @@
+.container {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 30px;
+  }
+  
+  .block-button {
+    display: block;
+    width: 200px;
+    padding: 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+  }
+  
+  .block-button:hover {
+    background-color: #0056b3;
+  }
+  

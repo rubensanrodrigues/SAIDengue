@@ -1,0 +1,66 @@
+<app-header title="SAI Dengue - Área protegida" [showLogout]="true">
+  <app-pacientemenu header-menu/>
+</app-header>
+<br>
+  <div *ngIf="carregando">
+    <p>Carregando paciente...</p>
+  </div>
+  
+  <div *ngIf="!carregando && paciente">
+    <h2>Detalhes do Paciente</h2>
+  
+    <section>
+      <h3>Dados Pessoais</h3>
+      <p><strong>Nome:</strong> {{ paciente.nome }}</p>
+      <p><strong>Data de Nascimento:</strong> {{ paciente.data_nascimento | date:'dd/MM/yyyy' }}</p>
+      <p><strong>Gênero:</strong> {{ paciente.genero }}</p>
+      <p><strong>Contato:</strong> {{ paciente.contato }}</p>
+      <p><strong>Histórico de Saúde:</strong> {{ paciente.historico_saude || 'Não informado' }}</p>
+      <div style="text-align: right; margin-top: 20px;">
+        <button (click)="listagemPaciente()" class="btn-editar">Voltar</button>&nbsp;
+        <button (click)="editarPaciente()" class="btn-editar">Editar Paciente</button>
+      </div>
+    </section>
+  
+    <section>
+      <h3>Endereço</h3>
+      <p><strong>CEP:</strong> {{ paciente.endereco_cep }}</p>
+      <p><strong>Logradouro:</strong> {{ paciente.endereco_logradouro }}</p>
+      <p><strong>Número:</strong> {{ paciente.endereco_numero }}</p>
+      <p><strong>Complemento:</strong> {{ paciente.endereco_complemento }}</p>
+      <p><strong>Bairro:</strong> {{ paciente.endereco_bairro }}</p>
+      <p><strong>Cidade:</strong> {{ paciente.endereco_cidade }}</p>
+    </section>
+
+    <section>
+      <h3>Exames</h3>
+      <div style="text-align: right; margin-top: 20px;">
+        <button (click)="novoExame()" class="btn-editar">+ Novo Exame</button>
+      </div>
+      <div *ngIf="!paciente.exames || paciente.exames.length === 0">
+        <p>Nenhum exame encontrado.</p>
+      </div>
+
+      <div  *ngIf="paciente.exames && paciente.exames.length > 0">
+        <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Status do Exame</th>
+                <th>Status do Resultado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let exame of paciente.exames" (click)="editarExame(exame.id)">
+                <td>{{ exame.exame_data | date:'dd/MM/yyyy' }}</td>
+                <td>{{ exame.exame_tipo }}</td>
+                <td>{{ exame.exame_status }}</td>
+                <td>{{ exame.resultado_status }}</td>
+              </tr>
+            </tbody>
+          </table>
+      </div>
+    </section>
+  </div>
+  
