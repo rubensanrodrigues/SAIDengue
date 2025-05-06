@@ -26,6 +26,15 @@
       </select>
     </div>
 
+    <div class="form-group" *ngIf="pacienteForm.get('genero')?.value === 'feminino'">
+      <label for="esta_gravida">Está grávida?</label>
+      <select id="esta_gravida" formControlName="esta_gravida">
+        <option [ngValue]="null">Selecione</option>
+        <option [ngValue]="true">Sim</option>
+        <option [ngValue]="false">Não</option>
+      </select>
+    </div>
+
     <div class="form-group">
       <label for="contato">Contato</label>
       <input id="contato" formControlName="contato" type="text" placeholder="Telefone ou e-mail" />

@@ -40,8 +40,20 @@ export class PacienteComponent implements OnInit {
       endereco_bairro: ['', Validators.required],
       endereco_cidade: ['', Validators.required],
       contato: ['', Validators.required],
-      historico_saude: ['']
+      historico_saude: [''],
+      esta_gravida: [null]
     });
+
+    this.pacienteForm.get('genero')?.valueChanges.subscribe(genero => {
+      if (genero.toLowerCase() === 'feminino') {
+        this.pacienteForm.get('esta_gravida')?.enable();
+      } else {
+        this.pacienteForm.get('esta_gravida')?.setValue(null);
+        this.pacienteForm.get('esta_gravida')?.disable();
+      }
+    });
+
+    this.pacienteForm.get('esta_gravida')?.disable();
 
     // verifica se é edição
     this.route.paramMap.subscribe(params => {
@@ -64,6 +76,13 @@ export class PacienteComponent implements OnInit {
     this.service.buscarPacientePorId(id).subscribe(response => {
       const dados = response.data;
       this.pacienteForm.patchValue(dados);
+
+      // Habilita ou desabilita o campo com base no gênero carregado
+      if (dados.genero?.toLowerCase() === 'feminino') {
+        this.pacienteForm.get('esta_gravida')?.enable();
+      } else {
+        this.pacienteForm.get('esta_gravida')?.disable();
+      }
     });
   }
 

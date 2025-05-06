@@ -2,7 +2,9 @@ from app import Session
 from app.models import KUser, Knowledge, KnowledgeFormated, Paciente, Exame
 from app.helper import Helper, AuthToken, ResponseWrapper, split_in_shorters
 
-from sqlalchemy import func, desc
+from sqlalchemy.orm import joinedload
+from sqlalchemy import func, desc, or_
+
 from datetime import datetime, date, timedelta
 
 from tiktoken import get_encoding
@@ -272,12 +274,17 @@ class PacienteController():
         response_wrapper = ResponseWrapper()
 
         nome_filtro = request.args.get('nome')
-        query = Session.query(Paciente)
+        query = Session.query(Paciente).outerjoin(Exame)
 
         if nome_filtro:
-            query = query.filter(Paciente.nome.ilike(f'%{nome_filtro}%'))
+            query = query.filter(
+                or_(
+                    Paciente.nome.ilike(f'%{nome_filtro}%'),
+                    Exame.numero_notificacao.ilike(f'%{nome_filtro}%')
+                )
+            )
 
-        pacientes = query.order_by(Paciente.nome.asc()).all()
+        pacientes = query.options(joinedload(Paciente.exames)).order_by(Paciente.nome.asc()).all()
 
         if not pacientes:
             return response_wrapper.get_response(status=404, message="Nenhum paciente encontrado")
@@ -298,6 +305,9 @@ class PacienteController():
         response_wrapper = ResponseWrapper()
         data = request.get_json()
 
+        if data['genero'] != 'Feminino':
+            data['esta_gravida'] = None
+
         paciente = Paciente(
             nome=data['nome'],
             data_nascimento=datetime.strptime(data['data_nascimento'], '%Y-%m-%d').date(),
@@ -309,7 +319,8 @@ class PacienteController():
             endereco_numero=data['endereco_numero'],
             endereco_complemento=data.get('endereco_complemento', ''),
             endereco_bairro=data['endereco_bairro'],
-            endereco_cidade=data['endereco_cidade']
+            endereco_cidade=data['endereco_cidade'],
+            esta_gravida=data['esta_gravida']
         )
         Session.add(paciente)
         Session.commit()
@@ -336,6 +347,7 @@ class PacienteController():
         paciente.endereco_complemento = data.get('endereco_complemento', '')
         paciente.endereco_bairro = data['endereco_bairro']
         paciente.endereco_cidade = data['endereco_cidade']
+        paciente.esta_gravida = data['esta_gravida']
 
         Session.commit()
 
@@ -360,7 +372,8 @@ class PacienteController():
                 "exame_status": exame.exame_status,
                 "resultado_data": exame.resultado_data.strftime('%Y-%m-%d') if exame.resultado_data else None,
                 "resultado_observacoes": exame.resultado_observacoes,
-                "resultado_status": exame.resultado_status
+                "resultado_status": exame.resultado_status,
+                "numero_notificacao": exame.numero_notificacao
             })
 
         return response_wrapper.get_response(data={
@@ -376,6 +389,7 @@ class PacienteController():
             "endereco_complemento": paciente.endereco_complemento,
             "endereco_bairro": paciente.endereco_bairro,
             "endereco_cidade": paciente.endereco_cidade,
+            "esta_gravida": paciente.esta_gravida,
             "exames": exames_data
         })
 
@@ -410,7 +424,8 @@ class ExameController():
             resultado_data=resultado_data,
             resultado_observacoes=data.get('resultado_observacoes', ''),
             resultado_status=data['resultado_status'],
-            paciente_id=data['paciente_id']
+            paciente_id=data['paciente_id'],
+            numero_notificacao=data['numero_notificacao']
         )
 
         Session.add(exame)
@@ -433,7 +448,8 @@ class ExameController():
             "resultado_data": exame.resultado_data.strftime('%Y-%m-%d') if exame.resultado_data else None,
             "resultado_observacoes": exame.resultado_observacoes,
             "resultado_status": exame.resultado_status,
-            "paciente_id": exame.paciente_id
+            "paciente_id": exame.paciente_id,
+            "numero_notificacao": exame.numero_notificacao
         })
 
     def update_exame(request, exame_id):
@@ -449,6 +465,7 @@ class ExameController():
         exame.exame_data = datetime.strptime(data['exame_data'], '%Y-%m-%d').date()
         exame.exame_tipo = data['exame_tipo']
         exame.exame_status = data['exame_status']
+        exame.numero_notificacao = data.get('numero_notificacao')
 
         # Resltado
         if data.get('resultado_data'):

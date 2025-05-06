@@ -34,6 +34,7 @@ export class ExameComponent implements OnInit {
 
       resultado_data: [''],
       resultado_status: [''],
+      numero_notificacao: [''],
       resultado_observacoes: ['']
     });
 

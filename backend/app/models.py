@@ -58,6 +58,7 @@ class Paciente(db.Model):
     nome = db.Column(db.String(255), nullable=False)
     data_nascimento = db.Column(db.Date, nullable=False)
     genero = db.Column(db.String(50), nullable=False)  # Ex: Masculino, Feminino, Outro
+    esta_gravida = db.Column(db.Boolean, nullable=True)
     contato = db.Column(db.String(50), nullable=False)
     historico_saude = db.Column(db.String, nullable=True)
 
@@ -86,6 +87,7 @@ class Exame(db.Model):
     resultado_data = db.Column(db.Date, nullable=True)
     resultado_observacoes = db.Column(db.Text, nullable=True)
     resultado_status = db.Column(db.String(50), nullable=True)  # Ex: Positivo, Negativo, Inconclusivo
+    numero_notificacao = db.Column(db.String(50), nullable=True)
 
     # Relacionamento com Paciente
     paciente_id = db.Column(
