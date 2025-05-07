@@ -27,7 +27,7 @@ class OpenaiEngine():
         for knowledge_formated in knowledge_formateds:
             # wait = randrange(1, 6)
             sleep(2)
-            print(f'DEBUG iteracao {i}')
+            print(f'EXEC Embbedings iteracao {i}')
 
             is_dbcommit = True
             try:
@@ -41,9 +41,9 @@ class OpenaiEngine():
                     knowledge_formated.is_created = True
                     knowledge_formated.embeddings = str(embedding)
 
-                print("DEBUG Fazendo embedding do texto")
+                print("EXEC Fazendo embedding do texto")
             except openai.error.RateLimitError:
-                print("DEBUG Rate limit error, esperando 20 segundo antes de tentar novamente")  # noqa: E501
+                print("EXEC Rate limit error, esperando 20 segundo antes de tentar novamente")  # noqa: E501
                 sleep(20)
                 embedding_result = openai.Embedding.create(
                     input=knowledge_formated.resized,
@@ -54,13 +54,15 @@ class OpenaiEngine():
                 if embedding:
                     knowledge_formated.is_created = True
                     knowledge_formated.embeddings = str(embedding)
-                print("DEBUG embedding texto depois de esperar 20 segundos")
+                print("EXEC Embedding texto depois de esperar 20 segundos")
 
             i += 1
             Session.add(knowledge_formated)
 
         if is_dbcommit:
             Session.commit()
+
+        print(f'EXEC Embbedings {i} registros processados')
 
     def prepare_df():
         global df, exp
