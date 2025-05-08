@@ -117,6 +117,10 @@ def get_context(question, max_size=1800):
     return "\n\n###\n\n".join(returns)
 
 
+def tokens_to_words_estimate(max_tokens):
+    return round(max_tokens * 0.75)
+
+
 def get_answer(
         question,
         model="gpt-3.5-turbo-instruct",
@@ -126,13 +130,29 @@ def get_answer(
     try:
         context = get_context(question, max_size=max_size)
         if not context.strip():
-            return "Não foi possível encontrar informações suficientes para responder à pergunta."
+            return "Essa pergunta está fora do escopo dos dados disponíveis no momento."
+
+        word_limit = tokens_to_words_estimate(max_tokens)
 
         prompt = (
-            "Responda à pergunta com base no contexto abaixo. "
+            "Responda de forma objetiva, usando apenas as informações mais relevantes do contexto "
+            f"e limite sua resposta a no máximo {word_limit} palavras.\n"
             "Se a pergunta não puder ser respondida com as informações fornecidas, diga: "
             "\"Eu não sei responder isso.\"\n\n"
-            f"Contexto:\n{context}\n\n---\n\nPergunta: {question}\n\nResposta:"
+            f"Contexto:\n{context}\n\n"
+            "---\n\n"
+            "Outras informações relevantes sobre a dengue podem ser:\n"
+            "A dengue é transmitida pelo mosquito Aedes aegypti, que se reproduz em água parada. "
+            "Os principais sintomas incluem febre alta, dor muscular e manchas vermelhas.\n"
+            "Prevenção: Eliminar criadouros de mosquitos, usar repelentes e telas de proteção.\n\n"
+            "Exemplo de perguntas possíveis:\n"
+            "1. Qual bairro tem o maior número de casos de dengue?\n"
+            "Resposta: O bairro com o maior número de casos de dengue é [Nome da Cidade] - [Nome do Bairro], com [número] "
+            "casos no mês de [Mês].\n\n"
+            "2. O que é a dengue e como é transmitida?\n"
+            "Resposta: A dengue é uma doença viral transmitida pelo mosquito Aedes aegypti, que se reproduz em água parada. "
+            "Os sintomas incluem febre alta e dor muscular.\n\n"
+            f"---\n\nPergunta: {question}\n\nResposta:"
         )
 
         print(prompt)

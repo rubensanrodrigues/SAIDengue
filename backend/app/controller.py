@@ -187,6 +187,12 @@ class KnowledgeController():
 
         data = request.get_json()
         if data['id']:
+            if int(data['id']) == 1:
+                return response_wrapper.get_response(
+                    status=403,
+                    message="A alteração deste ID não é permitida por regras de segurança"
+                )
+
             knowledge = Session.query(Knowledge).get(int(data['id']))
             if not knowledge:
                 return response_wrapper.get_response(status=404, message="Conhecimento não encontrado")

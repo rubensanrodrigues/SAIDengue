@@ -30,8 +30,10 @@ import { HeaderComponent } from '../../header/header.component';
             <tr *ngFor="let knowledge of knowledges">
               <td>{{ knowledge.subject }}</td>
               <td>
-                <button (click)="editKnowledge(knowledge.id)">Editar</button>
-                <button (click)="deleteKnowledge(knowledge.id)">Excluir</button>
+                <ng-container *ngIf="![1].includes(knowledge.id)">
+                  <button (click)="editKnowledge(knowledge.id)">Editar</button>
+                  <button (click)="deleteKnowledge(knowledge.id)">Excluir</button>
+                </ng-container>
               </td>
             </tr>
           </tbody>
@@ -84,9 +86,7 @@ export class KnowledgesListComponent implements OnInit {
 
   loadKnowledges(): void {
     this.knowledgeService.getKnowledges().subscribe((response: any) => {
-      this.knowledges = response;
-      console.log(this.knowledges);
-      
+      this.knowledges = response.map((k: any) => ({ ...k, id: Number(k.id) }));
     });
   }
 
