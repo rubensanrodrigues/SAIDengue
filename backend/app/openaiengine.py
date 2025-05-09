@@ -163,7 +163,7 @@ def get_answer(
             {"role": "user", "content": user_prompt}
         ]
 
-        print(messages)
+        # print(messages)
 
         retries = 3  # Defina o número de tentativas
         for attempt in range(retries):
