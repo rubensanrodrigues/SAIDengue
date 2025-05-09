@@ -18,16 +18,20 @@ import { HeaderComponent } from '../../header/header.component';
       <h1>{{ isEditMode ? 'Editar Usuário' : 'Novo Usuário' }}</h1>
 
       <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-        <label for="username">Username:</label>
+        <label for="username">* Username (5 ou mais caracteres)</label>
         <input id="username" formControlName="username" />
 
-        <label for="useremail">E-Mail:</label>
+        <label for="useremail">* Email (email válido, não pode ser vazio)</label>
         <input id="useremail" formControlName="useremail" />
 
-        <label for="password">Senha:</label>
+        <label for="password">* Senha (deve conter de 5 até 20 caracteres)</label>
         <input id="password" type="password" formControlName="password" />
 
-        <button type="submit" [disabled]="userForm.invalid">
+        <p id="mensagemValidacao">
+          * Os campos devem ser preenchidos conforme orientação
+        </p>
+
+        <button type="submit">
           {{ isEditMode ? 'Atualizar' : 'Cadastrar' }}
         </button>
       </form>
@@ -68,9 +72,9 @@ export class UserFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.userForm = this.fb.group({
-      username: ['', Validators.required],
-      useremail: ['', Validators.required],
-      password: ['']  // só usado na criação
+      username: ['', [Validators.required, Validators.minLength(5)]],
+      useremail: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20)]]
     });
 
     const paramId = this.route.snapshot.paramMap.get('id');
@@ -92,9 +96,15 @@ export class UserFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.userForm.invalid) return;
+    if (this.userForm.invalid) {
+      const msgEl = document.getElementById('mensagemValidacao');
+      if (msgEl) {
+        msgEl.classList.add('error-msg');
+      }
+      return;
+    }
 
-    const userData = this.userForm.getRawValue(); // inclui campos desabilitados
+    const userData = this.userForm.getRawValue();
     if (this.isEditMode && this.userId) {
       userData.id = this.userId;
       this.userService.updateUser(userData).subscribe(() => {
