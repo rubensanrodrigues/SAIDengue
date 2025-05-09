@@ -13,6 +13,7 @@ COPY backend/requirements.txt /requirements.txt
 
 # Cron
 COPY backend/cron-embeddings.py /SAIDengue/backend/cron-embeddings.py
+COPY backend/cron-report.py     /SAIDengue/backend/cron-report.py
 COPY crontab/SAIDengue-cron.txt /etc/cron.d/SAIDengue-cron
 
 # Copiar configurações de inicialização e Nginx

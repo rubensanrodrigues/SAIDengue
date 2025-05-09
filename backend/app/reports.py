@@ -5,7 +5,7 @@ import json
 from app import Session
 from app.models import Paciente, Exame
 
-from datetime import date, timedelta
+from datetime import date
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import func, desc, extract
 
@@ -14,7 +14,8 @@ class StatsReport:
 
     @staticmethod
     def resultado_intervalado(meses=3):
-        data_limite = date.today() - timedelta(days=(meses * 30))
+        hoje = date.today()
+        primeiro_mes_analisado = hoje.replace(day=1) - relativedelta(months=meses - 1)
 
         resultados = (
             Session.query(
@@ -27,7 +28,7 @@ class StatsReport:
             .join(Exame, Exame.paciente_id == Paciente.id)
             .filter(
                 Exame.resultado_status == 'Positivo',
-                Exame.resultado_data >= data_limite
+                Exame.resultado_data >= primeiro_mes_analisado
             )
             .group_by(
                 Paciente.endereco_cidade,
@@ -35,22 +36,23 @@ class StatsReport:
                 'ano',
                 'mes'
             )
-            .order_by(desc('ano'), 'mes', desc('total_casos_positivos'))
+            .order_by('ano', 'mes', desc('total_casos_positivos'))
             .all()
         )
 
         return resultados
 
     @staticmethod
-    def organizar_em_tabela(resultados, meses_anteriores=4):
+    def organizar_em_tabela(resultados, meses_anteriores=3):
         # Gera lista dos últimos `meses_anteriores` meses com (ano, mes)
         hoje = date.today()
+        primeiro_mes = hoje.replace(day=1) - relativedelta(months=meses_anteriores - 1)
         lista_meses = [
             (
-                (hoje - relativedelta(months=i)).year,
-                (hoje - relativedelta(months=i)).month
+                (primeiro_mes + relativedelta(months=i)).year,
+                (primeiro_mes + relativedelta(months=i)).month
             )
-            for i in reversed(range(meses_anteriores))
+            for i in range(meses_anteriores)
         ]
 
         # Mapeia número do mês para nome
@@ -87,8 +89,13 @@ class StatsReport:
 
         tabela_final = [cabecalho]
 
-        # Preenche as linhas
-        for (cidade, bairro), dados in tabela.items():
+        # Preenche as linhas (limitado aos 15 primeiros registros com mais casos no período)
+        linhas_ordenadas = sorted(
+            tabela.items(),
+            key=lambda item: -sum(item[1].values())  # ordena por total de casos (decrescente)
+        )
+
+        for (cidade, bairro), dados in linhas_ordenadas[:15]:  # limita a 15 bairros
             linha = [f"{cidade} - {bairro}"] + [
                 dados[(ano, mes)] for (ano, mes) in lista_meses
             ]
@@ -123,6 +130,8 @@ e por localidade, permitindo observar com clareza se os casos estão aumentando 
 
 O objetivo principal é oferecer uma visão clara e comparativa dos casos de dengue, destacando:
 - A distribuição mensal de casos de dengue
+- Incidencia por período
+- Concentração de casos
 - O total de casos positivos por bairro
 - A variação no número de casos ao longo dos últimos {meses} meses
 - A tendência de crescimento ou redução de ocorrências
@@ -131,6 +140,8 @@ O objetivo principal é oferecer uma visão clara e comparativa dos casos de den
 Este acompanhamento da dengue por bairro e por período é fundamental para entender o avanço da doença e apoiar ações
 de controle e prevenção. A seguir, está a tabela com os resultados mensais dos casos de dengue por cidade e bairro,
 representando o total de exames positivos registrados por período.
+
+Neste relatório, o rísco pode ser uma tendecia de crecimento ou oscilação ou então bairros com maior número de casos.
 
 Confira os dados consolidados no período analisado:
 """

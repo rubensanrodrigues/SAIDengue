@@ -16,7 +16,7 @@ class KUser(db.Model):
 
 
 class Knowledge(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, db.Sequence('knowledge_id_seq', start=10), primary_key=True)
     subject = db.Column(db.String, nullable=False)
     information = db.Column(db.Text, nullable=False)
     token_count = db.Column(db.Integer, nullable=False)
