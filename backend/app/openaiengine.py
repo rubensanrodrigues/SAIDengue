@@ -1,8 +1,11 @@
 import ast
+import time
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
 
 import openai  # type: ignore
+
+from openai.error import OpenAIError, Timeout
 from openai.embeddings_utils import distances_from_embeddings  # type: ignore
 
 from time import sleep
@@ -114,7 +117,7 @@ def get_context(question, max_size=1800):
 
         returns.append(row["text"])
 
-    return "\n\n###\n\n".join(returns)
+    return "\n\n---\n\n".join(returns)
 
 
 def tokens_to_words_estimate(max_tokens):
@@ -123,7 +126,7 @@ def tokens_to_words_estimate(max_tokens):
 
 def get_answer(
         question,
-        model="gpt-3.5-turbo-instruct",
+        model="gpt-4-turbo",
         max_size=1800,
         max_tokens=150,
         stop_sequence=None):
@@ -134,40 +137,54 @@ def get_answer(
 
         word_limit = tokens_to_words_estimate(max_tokens)
 
-        prompt = (
+        system_prompt = (
             "Responda de forma objetiva, usando apenas as informações mais relevantes do contexto "
-            f"e limite sua resposta a no máximo {word_limit} palavras.\n"
+            f"e limite sua resposta a no máximo {word_limit} palavras. "
             "Se a pergunta não puder ser respondida com as informações fornecidas, diga: "
-            "\"Eu não sei responder isso.\"\n\n"
+            "\"Eu não sei responder isso.\""
+        )
+
+        user_prompt = (
             f"Contexto:\n{context}\n\n"
             "---\n\n"
             "Outras informações relevantes sobre a dengue podem ser:\n"
             "A dengue é transmitida pelo mosquito Aedes aegypti, que se reproduz em água parada. "
             "Os principais sintomas incluem febre alta, dor muscular e manchas vermelhas.\n"
             "Prevenção: Eliminar criadouros de mosquitos, usar repelentes e telas de proteção.\n\n"
+            "---\n\n"
             "Exemplo de perguntas possíveis:\n"
             "1. Qual bairro tem o maior número de casos de dengue?\n"
-            "Resposta: O bairro com o maior número de casos de dengue é [Nome da Cidade] - [Nome do Bairro], com [número] "
-            "casos no mês de [Mês].\n\n"
-            "2. O que é a dengue e como é transmitida?\n"
-            "Resposta: A dengue é uma doença viral transmitida pelo mosquito Aedes aegypti, que se reproduz em água parada. "
-            "Os sintomas incluem febre alta e dor muscular.\n\n"
-            f"---\n\nPergunta: {question}\n\nResposta:"
+            "2. O que é a dengue e como é transmitida?\n\n"
+            f"---\n\nPergunta: {question}\n"
         )
 
-        print(prompt)
-        response = openai.Completion.create(
-            prompt=prompt,
-            temperature=0,
-            max_tokens=max_tokens,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-            stop=stop_sequence,
-            model=model
-        )
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
 
-        return response["choices"][0]["text"].strip()
+        print(messages)
+
+        retries = 3  # Defina o número de tentativas
+        for attempt in range(retries):
+            try:
+                response = openai.ChatCompletion.create(
+                    model=model,
+                    messages=messages,
+                    temperature=0,
+                    max_tokens=max_tokens,
+                    stop=stop_sequence,
+                    timeout=10
+                )
+
+                return response["choices"][0]["message"]["content"].strip()
+            except (OpenAIError, Timeout) as e:
+                print(f"Erro de conexão: {e}. Tentando novamente...")
+                time.sleep(5)  # Espera 5 segundos antes de tentar novamente
+
+        print("Falha na comunicação após várias tentativas.")
+        return "Falha na comunicação após várias tentativas. Tente em alguns instantes"
+
     except Exception as e:
         print(e)
         return "Erro ao processar sua pergunta. Tente novamente em instantes."
