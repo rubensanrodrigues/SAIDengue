@@ -28,7 +28,10 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.loginForm.invalid) return;
+    if (this.loginForm.invalid) {
+      this.msg = 'Usuário ou senha inválidos!';  // Exibe a mensagem de erro
+      return;
+    }
 
     const { username, password } = this.loginForm.value;
 
