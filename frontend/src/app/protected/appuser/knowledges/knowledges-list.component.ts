@@ -30,10 +30,13 @@ import { HeaderComponent } from '../../header/header.component';
             <tr *ngFor="let knowledge of knowledges">
               <td>{{ knowledge.subject }}</td>
               <td>
-                <ng-container *ngIf="![1].includes(knowledge.id)">
+                <ng-container *ngIf="![1].includes(knowledge.id); else noActions">
                   <button (click)="editKnowledge(knowledge.id)">Editar</button>
                   <button (click)="deleteKnowledge(knowledge.id)">Excluir</button>
                 </ng-container>
+                <ng-template #noActions>
+                  <span>&gt;&gt; Sem ações disponíveis &lt;&lt;</span>
+                </ng-template>
               </td>
             </tr>
           </tbody>
